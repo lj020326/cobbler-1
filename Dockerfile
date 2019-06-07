@@ -42,7 +42,7 @@ RUN yum install -y \
     cobbler \
     cobbler-web \
     xinetd \
-  && yum swap python2-django python2-django16 \\
+  && yum swap python2-django python2-django16 \
   && yum clean all \
   &&  rm -rf /var/cache/yum
 
