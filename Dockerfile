@@ -30,6 +30,7 @@ RUN yum install -y \
     python-netaddr \
     python-simplejson \
     python-urlgrabber \
+    python2-django16 \
     PyYAML \
     rsync \
     syslinux \
@@ -42,9 +43,10 @@ RUN yum install -y \
     cobbler \
     cobbler-web \
     xinetd \
-  && yum swap python2-django python2-django16 \
   && yum clean all \
   &&  rm -rf /var/cache/yum
+
+#RUN yum swap python2-django python2-django16
 
 # Copy supervisor conf
 COPY supervisord/supervisord.conf /etc/supervisord.conf
