@@ -12,17 +12,35 @@ RUN yum update -y \
     && yum clean all \
     && rm -rf /var/cache/yum
 
+# updated to agree with install done here
+# https://github.com/rbicker/ansible-cobbler/blob/master/tasks/main.yml
 RUN yum install -y \
-  cobbler \
-  cobbler-web \
-  pykickstart \
-  debmirror \
-  curl wget \
-  rsync \
-  supervisor \
-  net-tools \
-  memtest86+ \
-  which \
+    curl wget \
+    rsync \
+    supervisor \
+    net-tools \
+    memtest86+ \
+    which \
+    createrepo \
+    httpd \
+    mod_wsgi \
+    mod_ssl \
+    python-cheetah \
+    python-netaddr \
+    python-simplejson \
+    python-urlgrabber \
+    PyYAML \
+    rsync \
+    syslinux \
+    tftp-server \
+    yum-utils \
+    python-django \
+    debmirror \
+    pykickstart \
+    fence-agents-all \
+    cobbler \
+    cobbler-web \
+    xinetd \
   && yum clean all \
   &&  rm -rf /var/cache/yum
 
