@@ -21,6 +21,7 @@ RUN yum install -y \
     net-tools \
     memtest86+ \
     which \
+    nano \
     createrepo \
     httpd \
     mod_wsgi \
