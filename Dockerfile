@@ -43,9 +43,10 @@ RUN yum install -y \
     cobbler-web \
     xinetd \
   && yum clean all \
+  && yum swap -y python2-django python2-django16 \
   && rm -rf /var/cache/yum
 
-RUN yum swap -y python2-django python2-django16
+#RUN yum swap -y python2-django python2-django16
 
 # Copy supervisor conf
 COPY supervisord/supervisord.conf /etc/supervisord.conf
