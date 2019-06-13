@@ -1,5 +1,6 @@
-## ref: https://docs.docker.com/develop/develop-images/dockerfile_best-practices/
-FROM centos:7 AS build
+FROM centos:7
+
+MAINTAINER Didier FABERT (tartare) <didier@tartarefr.eu>
 
 # RPM REPOs
 RUN yum install -y \
@@ -14,9 +15,6 @@ RUN yum update -y \
 # updated to agree with install done here
 # https://github.com/rbicker/ansible-cobbler/blob/master/tasks/main.yml
 RUN yum install -y \
-    nano \
-    make \
-    openssl \
     curl wget \
     rsync \
     supervisor \
@@ -26,42 +24,29 @@ RUN yum install -y \
     nano \
     createrepo \
     httpd \
-    http-devel \
     mod_wsgi \
     mod_ssl \
     python-cheetah \
     python-netaddr \
     python-simplejson \
     python-urlgrabber \
-    python-django \
-    python-devel \
     PyYAML \
     rsync \
     syslinux \
     tftp-server \
     yum-utils \
+    python-django \
     debmirror \
     pykickstart \
     fence-agents-all \
-#    cobbler \
-#    cobbler-web \
+    cobbler \
+    cobbler-web \
     xinetd \
   && yum clean all \
+  && yum swap -y python2-django python2-django16 \
   && rm -rf /var/cache/yum
 
-WORKDIR /opt/cobbler
-
-# Copy the entire project and build it
-# This layer is rebuilt when a file changes in the project directory
-COPY cobbler /opt/src/cobbler/
-#RUN make install
-RUN make webtest
-
-# This results in a single layer image
-FROM scratch
-#COPY --from=build /bin/project /bin/project
-COPY --from=build /var/lib/cobbler /var/lib/cobbler
-COPY --from=build /var/www/cobbler /var/www/cobbler
+#RUN yum swap -y python2-django python2-django16
 
 # Copy supervisor conf
 COPY supervisord/supervisord.conf /etc/supervisord.conf
