@@ -63,8 +63,8 @@ RUN pip3 install --upgrade pip
 RUN pip3 install -r requirements-test.txt
 
 #RUN make install
-#RUN make clean devinstall
-RUN make clean install
+RUN make clean devinstall
+#RUN make clean install
 
 #RUN make --debug=v webtest
 #RUN make --debug=v devinstall
@@ -78,20 +78,20 @@ COPY --from=build /var/lib/cobbler /var/lib/cobbler
 COPY --from=build /var/www/cobbler /var/www/cobbler
 
 # Copy supervisor conf
-COPY supervisord/supervisord.conf /etc/supervisord.conf
-COPY supervisord/cobblerd.ini /etc/supervisord.d/cobblerd.ini
-COPY supervisord/tftpd.ini /etc/supervisord.d/tftpd.ini
-COPY supervisord/httpd.ini /etc/supervisord.d/httpd.ini
+COPY docker-cobbler/supervisord/supervisord.conf /etc/supervisord.conf
+COPY docker-cobbler/supervisord/cobblerd.ini /etc/supervisord.d/cobblerd.ini
+COPY docker-cobbler/supervisord/tftpd.ini /etc/supervisord.d/tftpd.ini
+COPY docker-cobbler/supervisord/httpd.ini /etc/supervisord.d/httpd.ini
 
 # Copy personnal snippets
-COPY snippets/partition_config /var/lib/cobbler/snippets/partition_config
-COPY snippets/configure_X /var/lib/cobbler/snippets/configure_X
-COPY snippets/add_repos /var/lib/cobbler/snippets/add_repos
-COPY snippets/disable_prelink /var/lib/cobbler/snippets/disable_prelink
-COPY snippets/systemd_persistant_journal /var/lib/cobbler/snippets/systemd_persistant_journal
-COPY snippets/rkhunter /var/lib/cobbler/snippets/rkhunter
-COPY snippets/enable_X /var/lib/cobbler/snippets/enable_X
-COPY snippets/yum_update /var/lib/cobbler/snippets/yum_update
+COPY docker-cobbler/snippets/partition_config /var/lib/cobbler/snippets/partition_config
+COPY docker-cobbler/snippets/configure_X /var/lib/cobbler/snippets/configure_X
+COPY docker-cobbler/snippets/add_repos /var/lib/cobbler/snippets/add_repos
+COPY docker-cobbler/snippets/disable_prelink /var/lib/cobbler/snippets/disable_prelink
+COPY docker-cobbler/snippets/systemd_persistant_journal /var/lib/cobbler/snippets/systemd_persistant_journal
+COPY docker-cobbler/snippets/rkhunter /var/lib/cobbler/snippets/rkhunter
+COPY docker-cobbler/snippets/enable_X /var/lib/cobbler/snippets/enable_X
+COPY docker-cobbler/snippets/yum_update /var/lib/cobbler/snippets/yum_update
 
 # Copy personnal kickstart
 
@@ -120,8 +120,8 @@ RUN for kickstart in sample sample_end legacy ; \
 # Install vim-enhanced by default and desktop packages if profile have el_type set to desktop (ksmeta)
 RUN echo -e "@core\n\nvim-enhanced\n#set \$el_type = \$getVar('type', 'minimal')\n#if \$el_type == 'desktop'\n@base\n@network-tools\n@x11\n@graphical-admin-tools\n#set \$el_version = \$getVar('os_version', None)\n#if \$el_version == 'rhel6'\n@desktop-platform\n@basic-desktop\n#else if \$el_version == 'rhel7'\n@gnome-desktop\n#end if\n#end if\nkernel" >> /var/lib/cobbler/snippets/func_install_if_enabled
 
-COPY first-sync.sh /usr/local/bin/first-sync.sh
-COPY entrypoint.sh /entrypoint.sh
+COPY docker-cobbler/first-sync.sh /usr/local/bin/first-sync.sh
+COPY docker-cobbler/entrypoint.sh /entrypoint.sh
 RUN chmod 755 /entrypoint.sh /usr/local/bin/first-sync.sh
 
 EXPOSE 69 80 443 25151
