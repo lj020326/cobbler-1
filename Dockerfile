@@ -43,8 +43,6 @@ RUN yum install -y \
     debmirror \
     pykickstart \
     fence-agents-all \
-#    cobbler \
-#    cobbler-web \
     xinetd \
   && yum clean all \
   && rm -rf /var/cache/yum
