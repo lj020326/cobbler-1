@@ -50,9 +50,10 @@ build_image() {
         fi
     fi
 
+#    docker build -t cobbler:latest . -f docker-cobbler/Dockerfile
 #    cd ${DOCKER_IMAGE_SRC_DIR}
 #    docker build -t ${DOCKER_IMAGE_NAME} .
-    docker build -t ${DOCKER_IMAGE_NAME} ${DOCKER_IMAGE_SRC_DIR}
+    docker build -t ${DOCKER_IMAGE_NAME} . -f ${DOCKER_IMAGE_SRC_DIR}/Dockerfile
 
 }
 
