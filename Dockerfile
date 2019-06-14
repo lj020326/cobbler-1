@@ -38,7 +38,6 @@ RUN yum install -y \
     python-netaddr \
     python-simplejson \
     python-urlgrabber \
-    python-django \
     python-devel \
     PyYAML \
     rsync \
