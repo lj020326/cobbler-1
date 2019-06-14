@@ -31,7 +31,7 @@ RUN yum install -y \
     nano \
     createrepo \
     httpd \
-    http-devel \
+    httpd-devel \
     mod_wsgi \
     mod_ssl \
     python-cheetah \
@@ -64,7 +64,7 @@ RUN make webtest
 
 # This results in a single layer image
 FROM scratch
-WORKDIR /opt/cobbler
+#WORKDIR /opt/cobbler
 
 #COPY --from=build /bin/project /bin/project
 COPY --from=build /var/lib/cobbler /var/lib/cobbler
