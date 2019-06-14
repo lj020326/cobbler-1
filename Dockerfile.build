@@ -116,8 +116,8 @@ COPY snippets/yum_update /var/lib/cobbler/snippets/yum_update
 #       /var/lib/cobbler/kickstarts/${kickstart}.ks ; \
 #    done
 
-# Install vim-enhanced by default and desktop packages if profile have el_type set to desktop (ksmeta)
-RUN echo -e "@core\n\nvim-enhanced\n#set \$el_type = \$getVar('type', 'minimal')\n#if \$el_type == 'desktop'\n@base\n@network-tools\n@x11\n@graphical-admin-tools\n#set \$el_version = \$getVar('os_version', None)\n#if \$el_version == 'rhel6'\n@desktop-platform\n@basic-desktop\n#else if \$el_version == 'rhel7'\n@gnome-desktop\n#end if\n#end if\nkernel" >> /var/lib/cobbler/snippets/func_install_if_enabled
+## Install vim-enhanced by default and desktop packages if profile have el_type set to desktop (ksmeta)
+#RUN echo -e "@core\n\nvim-enhanced\n#set \$el_type = \$getVar('type', 'minimal')\n#if \$el_type == 'desktop'\n@base\n@network-tools\n@x11\n@graphical-admin-tools\n#set \$el_version = \$getVar('os_version', None)\n#if \$el_version == 'rhel6'\n@desktop-platform\n@basic-desktop\n#else if \$el_version == 'rhel7'\n@gnome-desktop\n#end if\n#end if\nkernel" >> /var/lib/cobbler/snippets/func_install_if_enabled
 
 COPY first-sync.sh /usr/local/bin/first-sync.sh
 COPY entrypoint.sh /entrypoint.sh
