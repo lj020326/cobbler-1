@@ -106,7 +106,13 @@ restart_container() {
 
 #    docker run --name ${CONTAINER_NAME} --volume "${PWD}/.certs":/opt/ssl/ --volumes-from ${DATA_CONTAINER_NAME} -p 80:80 -d ${DOCKER_IMAGE_NAME}
 #    docker run --name ${CONTAINER_NAME} --volume "${PWD}/.certs":/opt/ssl/ --volumes-from ${DATA_CONTAINER_NAME} -d ${DOCKER_IMAGE_NAME}
-    docker run --name ${CONTAINER_NAME} --volume "${PWD}/.certs":/opt/ssl/ --volumes-from ${DATA_CONTAINER_NAME} --net=host -d ${DOCKER_IMAGE_NAME}
+#    docker run --name ${CONTAINER_NAME} --volume "${PWD}/.certs":/opt/ssl/ --volumes-from ${DATA_CONTAINER_NAME} --net=host -d ${DOCKER_IMAGE_NAME}
+
+    docker run --name ${CONTAINER_NAME} \
+        --volume "${PWD}/.certs":/opt/ssl/ \
+        --volumes-from ${DATA_CONTAINER_NAME} \
+        --env HOST_IP_ADDR=${HOST_IP_ADDR} \
+        --net=host -d ${DOCKER_IMAGE_NAME}
 
     echo "started container"
     echo "tailing container stdout..."
