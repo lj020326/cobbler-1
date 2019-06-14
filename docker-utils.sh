@@ -91,7 +91,7 @@ restart_container() {
 
 #    cd ${DOCKER_IMAGE_SRC_DIR}
 #    if [ ! "$(docker ps -qa -f name=${DATA_CONTAINER_NAME})" ]; then
-    if [ "$(docker ps -qa --no-trunc --filter name=^/${DATA_CONTAINER_NAME}$)" ]; then
+    if [ ! "$(docker ps -qa --no-trunc --filter name=^/${DATA_CONTAINER_NAME}$)" ]; then
 #        docker create --name ${DATA_CONTAINER_NAME} --volume "${PWD}/conf/":/opt/proxy-conf busybox /bin/true
         docker create --name ${DATA_CONTAINER_NAME} --volume "${PWD}/${DOCKER_IMAGE_SRC_DIR}/conf/":/opt/proxy-conf busybox /bin/true
     fi
