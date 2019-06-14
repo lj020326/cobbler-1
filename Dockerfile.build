@@ -70,7 +70,8 @@ RUN make clean install
 #RUN make --debug=v devinstall
 
 # This results in a single layer image
-FROM scratch
+#FROM scratch
+FROM centos:7
 #WORKDIR /opt/cobbler
 
 #COPY --from=build /bin/project /bin/project
