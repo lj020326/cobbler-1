@@ -101,12 +101,12 @@ restart_container() {
     if [[ ${DEBUG} -ne 0 ]]; then
         echo "debugging container - starting bash inside container:"
 #        docker run --name ${CONTAINER_NAME} --volume "${PWD}/certs":/opt/ssl/ --volumes-from ${DATA_CONTAINER_NAME} -p 80:80 -it --entrypoint /bin/bash ${DOCKER_IMAGE_NAME}
-        docker run --name ${CONTAINER_NAME} --volume "${PWD}/${DOCKER_IMAGE_SRC_DIR}/certs":/opt/ssl/ --volumes-from ${DATA_CONTAINER_NAME} -p 80:80 -it --entrypoint /bin/bash ${DOCKER_IMAGE_NAME}
+        docker run --name ${CONTAINER_NAME} --volume "${PWD}/${DOCKER_IMAGE_SRC_DIR}/certs":/opt/ssl/ --volumes-from ${DATA_CONTAINER_NAME} -it --entrypoint /bin/bash ${DOCKER_IMAGE_NAME}
         exit 0
     fi
 
 #    docker run --name ${CONTAINER_NAME} --volume "${PWD}/certs":/opt/ssl/ --volumes-from ${DATA_CONTAINER_NAME} -p 80:80 -d ${DOCKER_IMAGE_NAME}
-    docker run --name ${CONTAINER_NAME} --volume "${PWD}/${DOCKER_IMAGE_SRC_DIR}/certs":/opt/ssl/ --volumes-from ${DATA_CONTAINER_NAME} -p 80:80 -d ${DOCKER_IMAGE_NAME}
+    docker run --name ${CONTAINER_NAME} --volume "${PWD}/${DOCKER_IMAGE_SRC_DIR}/certs":/opt/ssl/ --volumes-from ${DATA_CONTAINER_NAME} -d ${DOCKER_IMAGE_NAME}
 #    docker run --name ${CONTAINER_NAME} --volume "${PWD}/certs":/opt/ssl/ --volumes-from ${DATA_CONTAINER_NAME} --net=host -d ${DOCKER_IMAGE_NAME}
 
     echo "started container"
