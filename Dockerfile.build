@@ -74,6 +74,7 @@ FROM scratch
 #WORKDIR /opt/cobbler
 
 #COPY --from=build /bin/project /bin/project
+COPY --from=build /bin /bin
 COPY --from=build /var/lib/cobbler /var/lib/cobbler
 COPY --from=build /var/www/cobbler /var/www/cobbler
 

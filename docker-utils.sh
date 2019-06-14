@@ -98,7 +98,7 @@ restart_container() {
 
     if [[ ${DEBUG} -ne 0 ]]; then
         echo "debugging container - starting bash inside container:"
-        docker run --name ${CONTAINER_NAME} --volume "${PWD}/certs":/opt/ssl/ --volumes-from ${DATA_CONTAINER_NAME} -it --entrypoint /bin/bash ${DOCKER_IMAGE_NAME}
+        docker run --name ${CONTAINER_NAME} --volume "${PWD}/.certs":/opt/ssl/ --volumes-from ${DATA_CONTAINER_NAME} -it --entrypoint /bin/bash ${DOCKER_IMAGE_NAME}
         exit 0
     fi
 
