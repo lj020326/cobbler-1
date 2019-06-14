@@ -4,6 +4,7 @@ debug_container=0
 
 #DOCKER_REGISTRY_LABEL=org-dettonville-labs
 DOCKER_REGISTRY_LABEL=localhost
+DOCKERFILE=Dockerfile.build
 
 usage() {
     echo "" 1>&2
@@ -36,9 +37,7 @@ build_image() {
     DOCKER_IMAGE_SRC_DIR="${DOCKER_APP_NAME}"
     CONTAINER_NAME="${DOCKER_APP_NAME}"
 
-#    if [ "$(docker ps -qa -f name=${CONTAINER_NAME})" ]; then
     if [ "$(docker ps -qa --no-trunc --filter name=^/${CONTAINER_NAME}$)" ]; then
-        #if [ "$(docker ps -q -f status=exited -f name=${CONTAINER_NAME})" ]; then
         if [ "$(docker ps -q -f name=^/${CONTAINER_NAME}$)" ]; then
             docker stop ${CONTAINER_NAME}
         fi
@@ -52,14 +51,11 @@ build_image() {
     fi
 
     CURR_DIR=`pwd`
-#    cd ${DOCKER_IMAGE_SRC_DIR}
     git pull
-#    cd ${CURR_DIR}
 
-#    docker build -t cobbler:latest . -f Dockerfile.build
-#    cd ${DOCKER_IMAGE_SRC_DIR}
 #    docker build -t ${DOCKER_IMAGE_NAME} .
-    docker build -t ${DOCKER_IMAGE_NAME} . -f Dockerfile.build
+#    docker build -t cobbler:latest . -f Dockerfile.build
+    docker build -t ${DOCKER_IMAGE_NAME} . -f ${DOCKERFILE}
 
 }
 
@@ -71,7 +67,6 @@ deploy_image() {
     #DOCKER_REPO_URL="artifactory.example.local:6555"
     DOCKER_REPO_URL="localhost:5000"
 
-#    cd ${DOCKER_IMAGE_SRC_DIR}
     docker tag ${DOCKER_IMAGE_NAME} ${DOCKER_REPO_URL}/${DOCKER_IMAGE_NAME}
 
     docker login "https://${DOCKER_REPO_URL}"
