@@ -85,7 +85,7 @@ restart_container() {
     DATA_CONTAINER_NAME="${DOCKER_APP_NAME}-data"
 
     if [ ! "$(docker ps -qa --no-trunc --filter name=^/${DATA_CONTAINER_NAME}$)" ]; then
-        docker create --name ${DATA_CONTAINER_NAME} --volume "${PWD}/${DOCKER_IMAGE_SRC_DIR}/conf/":/opt/proxy-conf busybox /bin/true
+        docker create --name ${DATA_CONTAINER_NAME} --volume "${PWD}/.conf/":/opt/proxy-conf busybox /bin/true
     fi
 
     if [ "$(docker ps -qa --no-trunc --filter name=^/${CONTAINER_NAME}$)" ]; then
@@ -98,7 +98,7 @@ restart_container() {
 
     if [[ ${DEBUG} -ne 0 ]]; then
         echo "debugging container - starting bash inside container:"
-        docker run --name ${CONTAINER_NAME} --volume "${PWD}/${DOCKER_IMAGE_SRC_DIR}/certs":/opt/ssl/ --volumes-from ${DATA_CONTAINER_NAME} -it --entrypoint /bin/bash ${DOCKER_IMAGE_NAME}
+        docker run --name ${CONTAINER_NAME} --volume "${PWD}/certs":/opt/ssl/ --volumes-from ${DATA_CONTAINER_NAME} -it --entrypoint /bin/bash ${DOCKER_IMAGE_NAME}
         exit 0
     fi
 
