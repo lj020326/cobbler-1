@@ -2,6 +2,9 @@
 
 debug_container=0
 
+#DOCKER_REGISTRY_LABEL=org-dettonville-labs
+DOCKER_REGISTRY_LABEL=localhost
+
 usage() {
     echo "" 1>&2
     echo "Usage: $0 command app_name" 1>&2
@@ -56,8 +59,6 @@ build_image() {
 deploy_image() {
     DOCKER_APP_NAME=$1
 
-    #DOCKER_REGISTRY_LABEL=org-dettonville-api
-    DOCKER_REGISTRY_LABEL=localhost
     DOCKER_IMAGE_NAME="${DOCKER_REGISTRY_LABEL}/${DOCKER_APP_NAME}"
     DOCKER_IMAGE_SRC_DIR="${DOCKER_APP_NAME}"
     #DOCKER_REPO_URL="artifactory.example.local:6555"
@@ -76,8 +77,6 @@ restart_container() {
     DOCKER_APP_NAME=$1
     DEBUG=${2-0}
 
-    #DOCKER_REGISTRY_LABEL=org-dettonville-labs
-    DOCKER_REGISTRY_LABEL=localhost
     DOCKER_IMAGE_NAME="${DOCKER_REGISTRY_LABEL}/${DOCKER_APP_NAME}"
     DOCKER_IMAGE_SRC_DIR="${DOCKER_APP_NAME}"
     CONTAINER_NAME="${DOCKER_APP_NAME}"
