@@ -29,6 +29,7 @@ build_image() {
     DOCKER_APP_NAME=$1
     CLEAN_BUILD=${2-0}
 
+    DOCKER_IMAGE_SRC_DIR="${DOCKER_APP_NAME}"
     CONTAINER_NAME="${DOCKER_APP_NAME}"
 
     if [ "$(docker ps -qa -f name=${CONTAINER_NAME})" ]; then
@@ -45,8 +46,9 @@ build_image() {
         fi
     fi
 
-    cd ${DOCKER_IMAGE_SRC_DIR}
-    docker build -t ${DOCKER_IMAGE_NAME} .
+#    cd ${DOCKER_IMAGE_SRC_DIR}
+#    docker build -t ${DOCKER_IMAGE_NAME} .
+    docker build -t ${DOCKER_IMAGE_NAME} ${DOCKER_IMAGE_SRC_DIR}
 
 }
 
@@ -60,7 +62,7 @@ deploy_image() {
     #DOCKER_REPO_URL="artifactory.example.local:6555"
     DOCKER_REPO_URL="localhost:5000"
 
-    cd ${DOCKER_IMAGE_SRC_DIR}
+#    cd ${DOCKER_IMAGE_SRC_DIR}
     docker tag ${DOCKER_IMAGE_NAME} ${DOCKER_REPO_URL}/${DOCKER_IMAGE_NAME}
 
     docker login "https://${DOCKER_REPO_URL}"
@@ -80,9 +82,10 @@ restart_container() {
     CONTAINER_NAME="${DOCKER_APP_NAME}"
     DATA_CONTAINER_NAME="${DOCKER_APP_NAME}-data"
 
-    cd ${DOCKER_IMAGE_SRC_DIR}
+#    cd ${DOCKER_IMAGE_SRC_DIR}
     if [ ! "$(docker ps -qa -f name=${DATA_CONTAINER_NAME})" ]; then
-        docker create --name ${DATA_CONTAINER_NAME} --volume "${PWD}/conf/":/opt/proxy-conf busybox /bin/true
+#        docker create --name ${DATA_CONTAINER_NAME} --volume "${PWD}/conf/":/opt/proxy-conf busybox /bin/true
+        docker create --name ${DATA_CONTAINER_NAME} --volume "${PWD}/${DOCKER_IMAGE_SRC_DIR}/conf/":/opt/proxy-conf busybox /bin/true
     fi
 
     if [ "$(docker ps -qa -f name=${CONTAINER_NAME})" ]; then
@@ -96,11 +99,13 @@ restart_container() {
 
     if [[ ${DEBUG} -ne 0 ]]; then
         echo "debugging container - starting bash inside container:"
-        docker run --name ${CONTAINER_NAME} --volume "${PWD}/certs":/opt/ssl/ --volumes-from ${DATA_CONTAINER_NAME} -p 80:80 -it --entrypoint /bin/bash ${DOCKER_IMAGE_NAME}
+#        docker run --name ${CONTAINER_NAME} --volume "${PWD}/certs":/opt/ssl/ --volumes-from ${DATA_CONTAINER_NAME} -p 80:80 -it --entrypoint /bin/bash ${DOCKER_IMAGE_NAME}
+        docker run --name ${CONTAINER_NAME} --volume "${PWD}/${DOCKER_IMAGE_SRC_DIR}/certs":/opt/ssl/ --volumes-from ${DATA_CONTAINER_NAME} -p 80:80 -it --entrypoint /bin/bash ${DOCKER_IMAGE_NAME}
         exit 0
     fi
 
-    docker run --name ${CONTAINER_NAME} --volume "${PWD}/certs":/opt/ssl/ --volumes-from ${DATA_CONTAINER_NAME} -p 80:80 -d ${DOCKER_IMAGE_NAME}
+#    docker run --name ${CONTAINER_NAME} --volume "${PWD}/certs":/opt/ssl/ --volumes-from ${DATA_CONTAINER_NAME} -p 80:80 -d ${DOCKER_IMAGE_NAME}
+    docker run --name ${CONTAINER_NAME} --volume "${PWD}/${DOCKER_IMAGE_SRC_DIR}/certs":/opt/ssl/ --volumes-from ${DATA_CONTAINER_NAME} -p 80:80 -d ${DOCKER_IMAGE_NAME}
 #    docker run --name ${CONTAINER_NAME} --volume "${PWD}/certs":/opt/ssl/ --volumes-from ${DATA_CONTAINER_NAME} --net=host -d ${DOCKER_IMAGE_NAME}
 
     echo "started container"
