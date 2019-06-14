@@ -20,3 +20,7 @@
 4) Run image
 
 
+- To debug a container with bash
+
+    ./docker-utils.sh debug-container docker-cobbler
+
