@@ -14,6 +14,7 @@ RUN yum update -y \
 # updated to agree with install done here
 # https://github.com/rbicker/ansible-cobbler/blob/master/tasks/main.yml
 RUN yum install -y \
+    python36u python36u-libs python36u-devel python36u-pip \
     nano \
     make \
     openssl \
@@ -46,6 +47,8 @@ RUN yum install -y \
     xinetd \
   && yum clean all \
   && rm -rf /var/cache/yum
+
+RUN ln -s /usr/bin/python3.6 /usr/bin/python3
 
 WORKDIR /opt/src/cobbler
 
