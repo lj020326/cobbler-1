@@ -37,7 +37,7 @@ build_image() {
     CONTAINER_NAME="${DOCKER_APP_NAME}"
 
 #    if [ "$(docker ps -qa -f name=${CONTAINER_NAME})" ]; then
-    if [ "$(docker ps -a --no-trunc --filter name=^/${CONTAINER_NAME}$)" ]; then
+    if [ "$(docker ps -qa --no-trunc --filter name=^/${CONTAINER_NAME}$)" ]; then
         #if [ "$(docker ps -q -f status=exited -f name=${CONTAINER_NAME})" ]; then
         if [ "$(docker ps -q -f name=${CONTAINER_NAME})" ]; then
             docker stop ${CONTAINER_NAME}
