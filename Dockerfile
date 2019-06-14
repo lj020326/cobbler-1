@@ -21,6 +21,8 @@ RUN ln -s /usr/bin/python3.6 /usr/bin/python3 \
 RUN yum install -y \
     nano which \
     make \
+    gcc glibc-devel \
+    git \
     openssl \
     curl wget \
     rsync \
@@ -61,7 +63,8 @@ RUN yum install -y gcc glibc-devel
 
 RUN pip3 install -r requirements-test.txt
 
-##RUN make install
+RUN make install
+
 #RUN make --debug=v webtest
 #
 ## This results in a single layer image
