@@ -3,14 +3,20 @@
 
     git clone https://github.com/lj020326/docker-cobbler.git
     
-1) Fetch the cobbler source repo submodule:
+2) Fetch the cobbler source repo submodule:
 
     git submodule update --recursive --remote
+    #git submodule foreach git pull origin master
 
-2) Build image
+    ## If existing project:
+    git submodule update --init
+
+3) Build image
 
     docker build -t cobbler:latest . -f Dockerfile.build
+    ## OR 
+    ./docker-utils.sh build docker-cobbler
 
-3) Run image
+4) Run image
 
 
