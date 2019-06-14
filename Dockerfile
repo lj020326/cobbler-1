@@ -14,6 +14,7 @@ RUN yum update -y \
     && rm -rf /var/cache/yum
 
 RUN ln -s /usr/bin/python3.6 /usr/bin/python3
+    && ln -s /usr/bin/pip3.6 /usr/bin/pip3
 
 # updated to agree with install done here
 # https://github.com/rbicker/ansible-cobbler/blob/master/tasks/main.yml
@@ -57,7 +58,7 @@ WORKDIR /opt/src/cobbler
 # This layer is rebuilt when a file changes in the project directory
 COPY cobbler .
 
-RUN pip install -r requirements-test.txt
+RUN pip3 install -r requirements-test.txt
 
 #RUN make install
 RUN make webtest
