@@ -62,7 +62,7 @@ RUN yum install -y gcc glibc-devel
 RUN pip3 install -r requirements-test.txt
 
 #RUN make install
-RUN make -d webtest
+RUN make --debug=v webtest
 
 # This results in a single layer image
 FROM scratch
