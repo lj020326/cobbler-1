@@ -193,10 +193,10 @@ case "${command}" in
     "deploy")
         deploy_image ${docker_app_name}
         ;;
-    "restart")
+    ["restart"]|["run"])
         restart_container ${docker_app_name} $debug_container
         ;;
-    "debug-container")
+    "debug")
         debug_container=1
         restart_container ${docker_app_name} $debug_container
         ;;
