@@ -55,6 +55,19 @@ RUN yum install -y \
 
 WORKDIR /opt/src/cobbler
 
+# This results in a single layer image
+#FROM scratch
+FROM centos:7 as build
+#WORKDIR /opt/cobbler
+
+#COPY --from=build /bin/project /bin/project
+#COPY --from=build /bin /bin
+COPY --from=build /usr/bin /usr/bin
+#COPY --from=build /var/lib/cobbler /var/lib/cobbler
+#COPY --from=build /var/www/cobbler /var/www/cobbler
+#COPY --from=build /usr/share/cobbler /usr/share/cobbler
+#COPY --from=build /etc/cobbler /etc/cobbler
+
 # Copy the entire project and build it
 # This layer is rebuilt when a file changes in the project directory
 COPY cobbler .
@@ -69,18 +82,18 @@ RUN make clean install
 #RUN make --debug=v webtest
 #RUN make --debug=v devinstall
 
-# This results in a single layer image
-#FROM scratch
-FROM centos:7
-#WORKDIR /opt/cobbler
-
-#COPY --from=build /bin/project /bin/project
-#COPY --from=build /bin /bin
-COPY --from=build /usr/bin /usr/bin
-COPY --from=build /var/lib/cobbler /var/lib/cobbler
-COPY --from=build /var/www/cobbler /var/www/cobbler
-COPY --from=build /usr/share/cobbler /usr/share/cobbler
-COPY --from=build /etc/cobbler /etc/cobbler
+## This results in a single layer image
+##FROM scratch
+#FROM centos:7
+##WORKDIR /opt/cobbler
+#
+##COPY --from=build /bin/project /bin/project
+##COPY --from=build /bin /bin
+#COPY --from=build /usr/bin /usr/bin
+#COPY --from=build /var/lib/cobbler /var/lib/cobbler
+#COPY --from=build /var/www/cobbler /var/www/cobbler
+#COPY --from=build /usr/share/cobbler /usr/share/cobbler
+#COPY --from=build /etc/cobbler /etc/cobbler
 
 # Copy supervisor conf
 COPY supervisord/supervisord.conf /etc/supervisord.conf
