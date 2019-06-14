@@ -52,14 +52,14 @@ build_image() {
     fi
 
     CURR_DIR=`pwd`
-    cd ${DOCKER_IMAGE_SRC_DIR}
+#    cd ${DOCKER_IMAGE_SRC_DIR}
     git pull
-    cd ${CURR_DIR}
+#    cd ${CURR_DIR}
 
-#    docker build -t cobbler:latest . -f docker-cobbler/Dockerfile
+#    docker build -t cobbler:latest . -f Dockerfile.build
 #    cd ${DOCKER_IMAGE_SRC_DIR}
 #    docker build -t ${DOCKER_IMAGE_NAME} .
-    docker build -t ${DOCKER_IMAGE_NAME} . -f ${DOCKER_IMAGE_SRC_DIR}/Dockerfile
+    docker build -t ${DOCKER_IMAGE_NAME} . -f Dockerfile.build
 
 }
 
@@ -89,16 +89,11 @@ restart_container() {
     CONTAINER_NAME="${DOCKER_APP_NAME}"
     DATA_CONTAINER_NAME="${DOCKER_APP_NAME}-data"
 
-#    cd ${DOCKER_IMAGE_SRC_DIR}
-#    if [ ! "$(docker ps -qa -f name=${DATA_CONTAINER_NAME})" ]; then
     if [ ! "$(docker ps -qa --no-trunc --filter name=^/${DATA_CONTAINER_NAME}$)" ]; then
-#        docker create --name ${DATA_CONTAINER_NAME} --volume "${PWD}/conf/":/opt/proxy-conf busybox /bin/true
         docker create --name ${DATA_CONTAINER_NAME} --volume "${PWD}/${DOCKER_IMAGE_SRC_DIR}/conf/":/opt/proxy-conf busybox /bin/true
     fi
 
-#    if [ "$(docker ps -qa -f name=${CONTAINER_NAME})" ]; then
     if [ "$(docker ps -qa --no-trunc --filter name=^/${CONTAINER_NAME}$)" ]; then
-        #if [ "$(docker ps -q -f status=exited -f name=${CONTAINER_NAME})" ]; then
         if [ "$(docker ps -q -f name=^/${CONTAINER_NAME}$)" ]; then
             docker stop ${CONTAINER_NAME}
             echo "container stopped"
@@ -108,14 +103,13 @@ restart_container() {
 
     if [[ ${DEBUG} -ne 0 ]]; then
         echo "debugging container - starting bash inside container:"
-#        docker run --name ${CONTAINER_NAME} --volume "${PWD}/certs":/opt/ssl/ --volumes-from ${DATA_CONTAINER_NAME} -p 80:80 -it --entrypoint /bin/bash ${DOCKER_IMAGE_NAME}
         docker run --name ${CONTAINER_NAME} --volume "${PWD}/${DOCKER_IMAGE_SRC_DIR}/certs":/opt/ssl/ --volumes-from ${DATA_CONTAINER_NAME} -it --entrypoint /bin/bash ${DOCKER_IMAGE_NAME}
         exit 0
     fi
 
-#    docker run --name ${CONTAINER_NAME} --volume "${PWD}/certs":/opt/ssl/ --volumes-from ${DATA_CONTAINER_NAME} -p 80:80 -d ${DOCKER_IMAGE_NAME}
-    docker run --name ${CONTAINER_NAME} --volume "${PWD}/${DOCKER_IMAGE_SRC_DIR}/certs":/opt/ssl/ --volumes-from ${DATA_CONTAINER_NAME} -d ${DOCKER_IMAGE_NAME}
-#    docker run --name ${CONTAINER_NAME} --volume "${PWD}/certs":/opt/ssl/ --volumes-from ${DATA_CONTAINER_NAME} --net=host -d ${DOCKER_IMAGE_NAME}
+#    docker run --name ${CONTAINER_NAME} --volume "${PWD}/.certs":/opt/ssl/ --volumes-from ${DATA_CONTAINER_NAME} -p 80:80 -d ${DOCKER_IMAGE_NAME}
+#    docker run --name ${CONTAINER_NAME} --volume "${PWD}/.certs":/opt/ssl/ --volumes-from ${DATA_CONTAINER_NAME} -d ${DOCKER_IMAGE_NAME}
+    docker run --name ${CONTAINER_NAME} --volume "${PWD}/.certs":/opt/ssl/ --volumes-from ${DATA_CONTAINER_NAME} --net=host -d ${DOCKER_IMAGE_NAME}
 
     echo "started container"
     echo "tailing container stdout..."

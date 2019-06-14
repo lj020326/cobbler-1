@@ -1,5 +1,6 @@
-## ref: https://docs.docker.com/develop/develop-images/dockerfile_best-practices/
-FROM centos:7 AS build
+FROM centos:7
+
+MAINTAINER Didier FABERT (tartare) <didier@tartarefr.eu>
 
 # RPM REPOs
 RUN yum install -y \
@@ -8,22 +9,12 @@ RUN yum install -y \
     && rm -rf /var/cache/yum
 
 RUN yum update -y \
-    && yum install -y https://centos7.iuscommunity.org/ius-release.rpm \
-    && yum install -y python36u python36u-libs python36u-devel python36u-pip \
     && yum clean all \
     && rm -rf /var/cache/yum
-
-RUN ln -s /usr/bin/python3.6 /usr/bin/python3 \
-    && ln -s /usr/bin/pip3.6 /usr/bin/pip3
 
 # updated to agree with install done here
 # https://github.com/rbicker/ansible-cobbler/blob/master/tasks/main.yml
 RUN yum install -y \
-    nano which \
-    make \
-    gcc glibc-devel \
-    git \
-    openssl \
     curl wget \
     rsync \
     supervisor \
@@ -33,65 +24,45 @@ RUN yum install -y \
     nano \
     createrepo \
     httpd \
-    httpd-devel \
     mod_wsgi \
     mod_ssl \
     python-cheetah \
     python-netaddr \
     python-simplejson \
     python-urlgrabber \
-    python-devel \
     PyYAML \
     rsync \
     syslinux \
     tftp-server \
     yum-utils \
+    python-django \
     debmirror \
     pykickstart \
     fence-agents-all \
+    cobbler \
+    cobbler-web \
     xinetd \
   && yum clean all \
+  && yum swap -y python2-django python2-django16 \
   && rm -rf /var/cache/yum
 
-WORKDIR /opt/src/cobbler
-
-# Copy the entire project and build it
-# This layer is rebuilt when a file changes in the project directory
-COPY cobbler .
-
-RUN pip3 install --upgrade pip
-RUN pip3 install -r requirements-test.txt
-
-#RUN make install
-RUN make clean devinstall
-#RUN make clean install
-
-#RUN make --debug=v webtest
-#RUN make --debug=v devinstall
-
-# This results in a single layer image
-FROM scratch
-#WORKDIR /opt/cobbler
-
-#COPY --from=build /bin/project /bin/project
-COPY --from=build /var/lib/cobbler /var/lib/cobbler
-COPY --from=build /var/www/cobbler /var/www/cobbler
+#RUN yum swap -y python2-django python2-django16
 
 # Copy supervisor conf
-COPY docker-cobbler/supervisord/supervisord.conf /etc/supervisord.conf
-COPY docker-cobbler/supervisord/cobblerd.ini /etc/supervisord.d/cobblerd.ini
-COPY docker-cobbler/supervisord/tftpd.ini /etc/supervisord.d/tftpd.ini
-COPY docker-cobbler/supervisord/httpd.ini /etc/supervisord.d/httpd.ini
+COPY supervisord/supervisord.conf /etc/supervisord.conf
+COPY supervisord/cobblerd.ini /etc/supervisord.d/cobblerd.ini
+COPY supervisord/tftpd.ini /etc/supervisord.d/tftpd.ini
+COPY supervisord/httpd.ini /etc/supervisord.d/httpd.ini
 
 # Copy personnal snippets
-COPY docker-cobbler/snippets/partition_config /var/lib/cobbler/snippets/partition_config
-COPY docker-cobbler/snippets/configure_X /var/lib/cobbler/snippets/configure_X
-COPY docker-cobbler/snippets/add_repos /var/lib/cobbler/snippets/add_repos
-COPY docker-cobbler/snippets/disable_prelink /var/lib/cobbler/snippets/disable_prelink
-COPY docker-cobbler/snippets/systemd_persistant_journal /var/lib/cobbler/snippets/systemd_persistant_journal
-COPY docker-cobbler/snippets/rkhunter /var/lib/cobbler/snippets/rkhunter
-COPY docker-cobbler/snippets/enable_X /var/lib/cobbler/snippets/enable_X
-COPY docker-cobbler/snippets/yum_update /var/lib/cobbler/snippets/yum_update
+COPY snippets/partition_config /var/lib/cobbler/snippets/partition_config
+COPY snippets/configure_X /var/lib/cobbler/snippets/configure_X
+COPY snippets/add_repos /var/lib/cobbler/snippets/add_repos
+COPY snippets/disable_prelink /var/lib/cobbler/snippets/disable_prelink
+COPY snippets/systemd_persistant_journal /var/lib/cobbler/snippets/systemd_persistant_journal
+COPY snippets/rkhunter /var/lib/cobbler/snippets/rkhunter
+COPY snippets/enable_X /var/lib/cobbler/snippets/enable_X
+COPY snippets/yum_update /var/lib/cobbler/snippets/yum_update
 
 # Copy personnal kickstart
 
@@ -120,12 +91,12 @@ RUN for kickstart in sample sample_end legacy ; \
 # Install vim-enhanced by default and desktop packages if profile have el_type set to desktop (ksmeta)
 RUN echo -e "@core\n\nvim-enhanced\n#set \$el_type = \$getVar('type', 'minimal')\n#if \$el_type == 'desktop'\n@base\n@network-tools\n@x11\n@graphical-admin-tools\n#set \$el_version = \$getVar('os_version', None)\n#if \$el_version == 'rhel6'\n@desktop-platform\n@basic-desktop\n#else if \$el_version == 'rhel7'\n@gnome-desktop\n#end if\n#end if\nkernel" >> /var/lib/cobbler/snippets/func_install_if_enabled
 
-COPY docker-cobbler/first-sync.sh /usr/local/bin/first-sync.sh
-COPY docker-cobbler/entrypoint.sh /entrypoint.sh
+COPY first-sync.sh /usr/local/bin/first-sync.sh
+COPY entrypoint.sh /entrypoint.sh
 RUN chmod 755 /entrypoint.sh /usr/local/bin/first-sync.sh
 
 EXPOSE 69 80 443 25151
 
-VOLUME [ "/var/www/cobbler","/var/lib/tftp","/var/lib/cobbler/config","/var/lib/cobbler/collections","/var/lib/cobbler/backup","/var/run/supervisor","/mnt" ]
+VOLUME [ "/var/www/cobbler", "/var/lib/tftp", "/var/lib/cobbler/config", "/var/lib/cobbler/backup", "/var/run/supervisor", "/mnt" ]
 
 ENTRYPOINT /entrypoint.sh

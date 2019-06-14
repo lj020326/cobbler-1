@@ -1,6 +1,5 @@
-FROM centos:7
-
-MAINTAINER Didier FABERT (tartare) <didier@tartarefr.eu>
+## ref: https://docs.docker.com/develop/develop-images/dockerfile_best-practices/
+FROM centos:7 AS build
 
 # RPM REPOs
 RUN yum install -y \
@@ -9,12 +8,22 @@ RUN yum install -y \
     && rm -rf /var/cache/yum
 
 RUN yum update -y \
+    && yum install -y https://centos7.iuscommunity.org/ius-release.rpm \
+    && yum install -y python36u python36u-libs python36u-devel python36u-pip \
     && yum clean all \
     && rm -rf /var/cache/yum
+
+RUN ln -s /usr/bin/python3.6 /usr/bin/python3 \
+    && ln -s /usr/bin/pip3.6 /usr/bin/pip3
 
 # updated to agree with install done here
 # https://github.com/rbicker/ansible-cobbler/blob/master/tasks/main.yml
 RUN yum install -y \
+    nano which \
+    make \
+    gcc glibc-devel \
+    git \
+    openssl \
     curl wget \
     rsync \
     supervisor \
@@ -24,29 +33,49 @@ RUN yum install -y \
     nano \
     createrepo \
     httpd \
+    httpd-devel \
     mod_wsgi \
     mod_ssl \
     python-cheetah \
     python-netaddr \
     python-simplejson \
     python-urlgrabber \
+    python-devel \
     PyYAML \
     rsync \
     syslinux \
     tftp-server \
     yum-utils \
-    python-django \
     debmirror \
     pykickstart \
     fence-agents-all \
-    cobbler \
-    cobbler-web \
     xinetd \
   && yum clean all \
-  && yum swap -y python2-django python2-django16 \
   && rm -rf /var/cache/yum
 
-#RUN yum swap -y python2-django python2-django16
+WORKDIR /opt/src/cobbler
+
+# Copy the entire project and build it
+# This layer is rebuilt when a file changes in the project directory
+COPY cobbler .
+
+RUN pip3 install --upgrade pip
+RUN pip3 install -r requirements-test.txt
+
+#RUN make install
+RUN make clean devinstall
+#RUN make clean install
+
+#RUN make --debug=v webtest
+#RUN make --debug=v devinstall
+
+# This results in a single layer image
+FROM scratch
+#WORKDIR /opt/cobbler
+
+#COPY --from=build /bin/project /bin/project
+COPY --from=build /var/lib/cobbler /var/lib/cobbler
+COPY --from=build /var/www/cobbler /var/www/cobbler
 
 # Copy supervisor conf
 COPY supervisord/supervisord.conf /etc/supervisord.conf
@@ -97,6 +126,6 @@ RUN chmod 755 /entrypoint.sh /usr/local/bin/first-sync.sh
 
 EXPOSE 69 80 443 25151
 
-VOLUME [ "/var/www/cobbler", "/var/lib/tftp", "/var/lib/cobbler/config", "/var/lib/cobbler/backup", "/var/run/supervisor", "/mnt" ]
+VOLUME [ "/var/www/cobbler","/var/lib/tftp","/var/lib/cobbler/config","/var/lib/cobbler/collections","/var/lib/cobbler/backup","/var/run/supervisor","/mnt" ]
 
 ENTRYPOINT /entrypoint.sh
