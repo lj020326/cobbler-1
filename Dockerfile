@@ -121,12 +121,6 @@ RUN chmod 755 /entrypoint.sh /usr/local/bin/first-sync.sh
 
 EXPOSE 69 80 443 25151
 
-VOLUME [ "/var/www/cobbler",
-        "/var/lib/tftp",
-        "/var/lib/cobbler/config",
-        "/var/lib/cobbler/collections",
-        "/var/lib/cobbler/backup",
-        "/var/run/supervisor",
-        "/mnt" ]
+VOLUME [ "/var/www/cobbler","/var/lib/tftp","/var/lib/cobbler/config","/var/lib/cobbler/collections","/var/lib/cobbler/backup","/var/run/supervisor","/mnt" ]
 
 ENTRYPOINT /entrypoint.sh
