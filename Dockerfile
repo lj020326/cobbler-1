@@ -57,6 +57,8 @@ WORKDIR /opt/src/cobbler
 # This layer is rebuilt when a file changes in the project directory
 COPY cobbler .
 
+RUN yum install -y gcc glibc-devel
+
 RUN pip3 install -r requirements-test.txt
 
 #RUN make install
