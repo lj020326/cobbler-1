@@ -39,7 +39,7 @@ build_image() {
 #    if [ "$(docker ps -qa -f name=${CONTAINER_NAME})" ]; then
     if [ "$(docker ps -qa --no-trunc --filter name=^/${CONTAINER_NAME}$)" ]; then
         #if [ "$(docker ps -q -f status=exited -f name=${CONTAINER_NAME})" ]; then
-        if [ "$(docker ps -q -f name=${CONTAINER_NAME})" ]; then
+        if [ "$(docker ps -q -f name=^/${CONTAINER_NAME}$)" ]; then
             docker stop ${CONTAINER_NAME}
         fi
         docker rm ${CONTAINER_NAME}
@@ -90,14 +90,16 @@ restart_container() {
     DATA_CONTAINER_NAME="${DOCKER_APP_NAME}-data"
 
 #    cd ${DOCKER_IMAGE_SRC_DIR}
-    if [ ! "$(docker ps -qa -f name=${DATA_CONTAINER_NAME})" ]; then
+#    if [ ! "$(docker ps -qa -f name=${DATA_CONTAINER_NAME})" ]; then
+    if [ "$(docker ps -qa --no-trunc --filter name=^/${DATA_CONTAINER_NAME}$)" ]; then
 #        docker create --name ${DATA_CONTAINER_NAME} --volume "${PWD}/conf/":/opt/proxy-conf busybox /bin/true
         docker create --name ${DATA_CONTAINER_NAME} --volume "${PWD}/${DOCKER_IMAGE_SRC_DIR}/conf/":/opt/proxy-conf busybox /bin/true
     fi
 
-    if [ "$(docker ps -qa -f name=${CONTAINER_NAME})" ]; then
+#    if [ "$(docker ps -qa -f name=${CONTAINER_NAME})" ]; then
+    if [ "$(docker ps -qa --no-trunc --filter name=^/${CONTAINER_NAME}$)" ]; then
         #if [ "$(docker ps -q -f status=exited -f name=${CONTAINER_NAME})" ]; then
-        if [ "$(docker ps -q -f name=${CONTAINER_NAME})" ]; then
+        if [ "$(docker ps -q -f name=^/${CONTAINER_NAME}$)" ]; then
             docker stop ${CONTAINER_NAME}
             echo "container stopped"
         fi
@@ -129,9 +131,9 @@ stop_container() {
 
     CONTAINER_NAME="${DOCKER_APP_NAME}"
 
-    if [ "$(docker ps -qa -f name=${CONTAINER_NAME})" ]; then
+    if [ "$(docker ps -qa -f name=^/${CONTAINER_NAME}$)" ]; then
         #if [ "$(docker ps -q -f status=exited -f name=${CONTAINER_NAME})" ]; then
-        if [ "$(docker ps -q -f name=${CONTAINER_NAME})" ]; then
+        if [ "$(docker ps -q -f name=^/${CONTAINER_NAME}$)" ]; then
             docker stop ${CONTAINER_NAME}
             echo "container stopped"
         else
