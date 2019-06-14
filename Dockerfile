@@ -47,16 +47,18 @@ RUN yum install -y \
   && yum clean all \
   && rm -rf /var/cache/yum
 
-WORKDIR /opt/cobbler
+WORKDIR /opt/src/cobbler
 
 # Copy the entire project and build it
 # This layer is rebuilt when a file changes in the project directory
-COPY cobbler /opt/src/cobbler/
+COPY cobbler .
 #RUN make install
 RUN make webtest
 
 # This results in a single layer image
 FROM scratch
+WORKDIR /opt/cobbler
+
 #COPY --from=build /bin/project /bin/project
 COPY --from=build /var/lib/cobbler /var/lib/cobbler
 COPY --from=build /var/www/cobbler /var/www/cobbler
