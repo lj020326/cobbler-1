@@ -8,14 +8,17 @@ RUN yum install -y \
     && rm -rf /var/cache/yum
 
 RUN yum update -y \
+    && yum install -y https://centos7.iuscommunity.org/ius-release.rpm \
+    && yum install -y python36u python36u-libs python36u-devel python36u-pip \
     && yum clean all \
     && rm -rf /var/cache/yum
+
+RUN ln -s /usr/bin/python3.6 /usr/bin/python3
 
 # updated to agree with install done here
 # https://github.com/rbicker/ansible-cobbler/blob/master/tasks/main.yml
 RUN yum install -y \
-    python36u python36u-libs python36u-devel python36u-pip \
-    nano \
+    nano which \
     make \
     openssl \
     curl wget \
@@ -47,8 +50,6 @@ RUN yum install -y \
     xinetd \
   && yum clean all \
   && rm -rf /var/cache/yum
-
-RUN ln -s /usr/bin/python3.6 /usr/bin/python3
 
 WORKDIR /opt/src/cobbler
 
