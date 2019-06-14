@@ -6,6 +6,8 @@ debug_container=0
 DOCKER_REGISTRY_LABEL=localhost
 DOCKERFILE=Dockerfile.build
 
+HOST_IP_ADDR=$(hostname --ip-address)
+
 usage() {
     echo "" 1>&2
     echo "Usage: $0 command app_name" 1>&2
