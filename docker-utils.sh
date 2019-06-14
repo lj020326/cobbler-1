@@ -50,6 +50,11 @@ build_image() {
         fi
     fi
 
+    CURR_DIR=`pwd`
+    cd ${DOCKER_IMAGE_SRC_DIR}
+    git pull
+    cd ${CURR_DIR}
+
 #    docker build -t cobbler:latest . -f docker-cobbler/Dockerfile
 #    cd ${DOCKER_IMAGE_SRC_DIR}
 #    docker build -t ${DOCKER_IMAGE_NAME} .
