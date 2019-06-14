@@ -57,7 +57,7 @@ WORKDIR /opt/src/cobbler
 # This layer is rebuilt when a file changes in the project directory
 COPY cobbler .
 
-pip install -r requirements-test.txt
+RUN pip install -r requirements-test.txt
 
 #RUN make install
 RUN make webtest
