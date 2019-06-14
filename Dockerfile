@@ -13,7 +13,7 @@ RUN yum update -y \
     && yum clean all \
     && rm -rf /var/cache/yum
 
-RUN ln -s /usr/bin/python3.6 /usr/bin/python3
+RUN ln -s /usr/bin/python3.6 /usr/bin/python3 \
     && ln -s /usr/bin/pip3.6 /usr/bin/pip3
 
 # updated to agree with install done here
