@@ -90,6 +90,8 @@ FROM centos:7
 #COPY --from=build /bin/project /bin/project
 #COPY --from=build /bin /bin
 COPY --from=build /usr/bin /usr/bin
+COPY --from=build /usr/lib /usr/lib
+COPY --from=build /usr/share /usr/share
 COPY --from=build /var/lib/cobbler /var/lib/cobbler
 COPY --from=build /var/www/cobbler /var/www/cobbler
 COPY --from=build /usr/share/cobbler /usr/share/cobbler

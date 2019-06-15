@@ -12,41 +12,19 @@ RUN yum update -y \
     && yum clean all \
     && rm -rf /var/cache/yum
 
-# updated to agree with install done here
-# https://github.com/rbicker/ansible-cobbler/blob/master/tasks/main.yml
 RUN yum install -y \
-    curl wget \
-    rsync \
-    supervisor \
-    net-tools \
-    memtest86+ \
-    which \
-    nano \
-    createrepo \
-    httpd \
-    mod_wsgi \
-    mod_ssl \
-    python-cheetah \
-    python-netaddr \
-    python-simplejson \
-    python-urlgrabber \
-    PyYAML \
-    rsync \
-    syslinux \
-    tftp-server \
-    yum-utils \
-    python-django \
-    debmirror \
-    pykickstart \
-    fence-agents-all \
-    cobbler \
-    cobbler-web \
-    xinetd \
+  cobbler \
+  cobbler-web \
+  pykickstart \
+  debmirror \
+  curl wget \
+  rsync \
+  supervisor \
+  net-tools \
+  memtest86+ \
+  which \
   && yum clean all \
-  && yum swap -y python2-django python2-django16 \
-  && rm -rf /var/cache/yum
-
-#RUN yum swap -y python2-django python2-django16
+  &&  rm -rf /var/cache/yum
 
 # Copy supervisor conf
 COPY supervisord/supervisord.conf /etc/supervisord.conf
