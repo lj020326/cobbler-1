@@ -94,7 +94,7 @@ COPY --from=build /usr/lib /usr/lib
 COPY --from=build /usr/share /usr/share
 COPY --from=build /var/lib/cobbler /var/lib/cobbler
 COPY --from=build /var/www/cobbler /var/www/cobbler
-COPY --from=build /usr/share/cobbler /usr/share/cobbler
+#COPY --from=build /usr/share/cobbler /usr/share/cobbler
 COPY --from=build /etc/cobbler /etc/cobbler
 
 # Copy supervisor conf
