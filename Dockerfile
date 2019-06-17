@@ -13,7 +13,6 @@ RUN yum update -y \
     && rm -rf /var/cache/yum
 
 RUN yum install -y \
-  python2-django16 \
   cobbler \
   cobbler-web \
   pykickstart \
@@ -26,8 +25,6 @@ RUN yum install -y \
   which \
   && yum clean all \
   &&  rm -rf /var/cache/yum
-
-#RUN yum swap -y python2-django python2-django16
 
 # Copy supervisor conf
 COPY supervisord/supervisord.conf /etc/supervisord.conf
