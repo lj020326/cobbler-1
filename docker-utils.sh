@@ -101,9 +101,13 @@ restart_container() {
     if [[ ${DEBUG} -ne 0 ]]; then
         echo "debugging container - starting bash inside container:"
         docker run --name ${CONTAINER_NAME} \
-            --env HOST_IP_ADDR=${HOST_IP_ADDR} \
             --volume "${PWD}/.certs":/opt/ssl/ \
             --volumes-from ${DATA_CONTAINER_NAME} \
+            --net=host \
+            --env HOST_IP_ADDR=${HOST_IP_ADDR} \
+            --env COBBLER_LANG=en_US \
+            --env COBBLER_KEYBOARD=us \
+            --env COBBLER_TZ=America/New_York \
             -it --entrypoint /bin/bash ${DOCKER_IMAGE_NAME}
         exit 0
     fi
@@ -115,8 +119,12 @@ restart_container() {
     docker run --name ${CONTAINER_NAME} \
         --volume "${PWD}/.certs":/opt/ssl/ \
         --volumes-from ${DATA_CONTAINER_NAME} \
+        --net=host \
         --env HOST_IP_ADDR=${HOST_IP_ADDR} \
-        --net=host -d ${DOCKER_IMAGE_NAME}
+        --env COBBLER_LANG=en_US \
+        --env COBBLER_KEYBOARD=us \
+        --env COBBLER_TZ=America/New_York \
+        -d ${DOCKER_IMAGE_NAME}
 
     echo "started container"
     echo "tailing container stdout..."
