@@ -75,7 +75,7 @@ for snippet in sample.seed sample_old.seed
 do
   sed -i \
       -e "s|America\/New_York|${COBBLER_TZ}|" \
-      -e "s|us$|fr-latin9|" \
+      -e "s|us$|${COBBLER_KEYBOARD}|" \
       -e "s|en_US$|${COBBLER_LANG}|" \
       /var/lib/cobbler/kickstarts/${snippet}
 done
