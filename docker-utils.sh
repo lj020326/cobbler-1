@@ -167,7 +167,7 @@ while getopts ":x" opt; do
         x)
             debug_container=1
             ;;
-        r) DOCKERFILE="${OPTARG}" ;;
+        f) DOCKERFILE="${OPTARG}" ;;
         x) debug_container=1 ;;
         h) usage 1 ;;
         \?) usage 2 ;;
