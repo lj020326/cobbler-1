@@ -19,7 +19,7 @@ RUN ln -s /usr/bin/python3.6 /usr/bin/python3 \
 # updated to agree with install done here
 # https://github.com/rbicker/ansible-cobbler/blob/master/tasks/main.yml
 RUN yum install -y \
-    nano which \
+    nano which telnet \
     make \
     gcc glibc-devel \
     git \
