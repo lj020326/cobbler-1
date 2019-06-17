@@ -141,7 +141,9 @@ COPY snippets/yum_update /var/lib/cobbler/snippets/yum_update
 
 COPY first-sync.sh /usr/local/bin/first-sync.sh
 COPY entrypoint.sh /entrypoint.sh
-RUN chmod 755 /entrypoint.sh /usr/local/bin/first-sync.sh
+COPY init-kickstart.sh /init-kickstart.sh
+
+RUN chmod 755 /entrypoint.sh /init-kickstart.sh /usr/local/bin/first-sync.sh
 
 EXPOSE 69 80 443 25151
 
