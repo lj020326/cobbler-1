@@ -10,23 +10,23 @@ HOST_IP_ADDR=$(hostname --ip-address)
 
 usage() {
     echo "" 1>&2
-    echo "Usage: $0 command app_name" 1>&2
-#    echo "" 1>&2
-#    echo "      optional:" 1>&2
-#    echo "          -x: debug container" 1>&2
+    echo "Usage: ${0} [options] command container_name" 1>&2
     echo "" 1>&2
-    echo "      required:" 1>&2
-    echo "          command:    build (builds docker image)" 1>&2
-    echo "                      clean-build (cleans existing image and rebuilds)" 1>&2
-    echo "                      deploy (deploys image to docker repo)" 1>&2
-    echo "                      restart (restart container)" 1>&2
-    echo "                      debug-container (debug container)" 1>&2
-    echo "                      stop (stop container)" 1>&2
-    echo "                      tail-log-access (tails apache access log from running container)" 1>&2
-    echo "                      tail-log-error (tails apache error log from running container)" 1>&2
-    echo "                      fetch-log-access (fetches a copy of the apache access log from running container)" 1>&2
-    echo "                      fetch-log-error (fetches a copy of the apache error log from running container)" 1>&2
-    echo "          app_name:   build directory name which should be directory below the directory where this script is executed" 1>&2
+    echo "  Options:" 1>&2
+    echo "     -f dockerfile : set dckerfile used, defaults to 'Dockerfile'" 1>&2
+    echo "" 1>&2
+    echo "  Required:" 1>&2
+    echo "     container_name:   container name" 1>&2
+    echo "     command:    build (builds docker image)" 1>&2
+    echo "                 clean-build (cleans existing image and rebuilds)" 1>&2
+    echo "                 deploy (deploys image to docker repo)" 1>&2
+    echo "                 restart (restart container)" 1>&2
+    echo "                 debug-container (debug container)" 1>&2
+    echo "                 stop (stop container)" 1>&2
+    echo "                 tail-log-access (tails apache access log from running container)" 1>&2
+    echo "                 tail-log-error (tails apache error log from running container)" 1>&2
+    echo "                 fetch-log-access (fetches a copy of the apache access log from running container)" 1>&2
+    echo "                 fetch-log-error (fetches a copy of the apache error log from running container)" 1>&2
     exit 1
 }
 
@@ -167,10 +167,10 @@ while getopts ":x" opt; do
         x)
             debug_container=1
             ;;
-        \?)
-            echo "Invalid option: -$OPTARG" >&2
-            usage
-            ;;
+        r) DOCKERFILE="${OPTARG}" ;;
+        x) debug_container=1 ;;
+        h) usage 1 ;;
+        \?) usage 2 ;;
         :)
             echo "Option -$OPTARG requires an argument." >&2
             usage
