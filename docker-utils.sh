@@ -162,11 +162,8 @@ fetch_log() {
 }
 
 
-while getopts ":x" opt; do
+while getopts "f:hx" opt; do
     case "${opt}" in
-        x)
-            debug_container=1
-            ;;
         f) DOCKERFILE="${OPTARG}" ;;
         x) debug_container=1 ;;
         h) usage 1 ;;
