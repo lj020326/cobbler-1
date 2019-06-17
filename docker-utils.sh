@@ -13,7 +13,7 @@ usage() {
     echo "Usage: ${0} [options] command container_name" 1>&2
     echo "" 1>&2
     echo "  Options:" 1>&2
-    echo "     -f dockerfile : set dckerfile used, defaults to 'Dockerfile'" 1>&2
+    echo "     -f dockerfile : set dockerfile used, defaults to 'Dockerfile'" 1>&2
     echo "" 1>&2
     echo "  Required:" 1>&2
     echo "     container_name:   container name" 1>&2
