@@ -6,7 +6,9 @@ debug_container=0
 DOCKER_REGISTRY_LABEL=localhost
 DOCKERFILE=Dockerfile.build
 
-HOST_IP_ADDR=$(hostname --ip-address)
+## ref: https://hub.docker.com/r/tartarefr/docker-cobbler/
+#HOST_IP_ADDR=$(hostname --ip-address)
+HOST_IP_ADDR=$(hostname --ip-address | awk '{print $1}')
 
 usage() {
     echo "" 1>&2

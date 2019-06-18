@@ -54,6 +54,9 @@ RUN yum install -y \
   && yum clean all \
   && rm -rf /var/cache/yum
 
+## ref: https://www.centoshowtos.org/installation/kickstart-and-cobbler/
+RUN yum install -y system-config-kickstart
+
 WORKDIR /opt/src/cobbler
 
 ## This results in a single layer image
