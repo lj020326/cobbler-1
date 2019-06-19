@@ -106,6 +106,7 @@ restart_container() {
             --volume "${PWD}/.certs":/opt/ssl/ \
             --volumes-from ${DATA_CONTAINER_NAME} \
             --net=host \
+            --env DEFAULT_ROOT_PASSWD=cobbler \
             --env HOST_IP_ADDR=${HOST_IP_ADDR} \
             --env HOST_HTTP_PORT=443 \
             --env COBBLER_WEB_USER=cobbler \
@@ -126,6 +127,7 @@ restart_container() {
         --volume "${PWD}/.certs":/opt/ssl/ \
         --volumes-from ${DATA_CONTAINER_NAME} \
         --net=host \
+        --env DEFAULT_ROOT_PASSWD=cobbler \
         --env HOST_IP_ADDR=${HOST_IP_ADDR} \
         --env HOST_HTTP_PORT=443 \
         --env COBBLER_WEB_USER=cobbler \
