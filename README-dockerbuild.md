@@ -54,3 +54,32 @@ mod +x docker-utils.sh
 story | grep docker-utils
 story | grep docker-utils | cut -c10-
 story | grep docker-utils | cut -c10- | sort 
+acs docker-utils.sh 
+ docker-utils.sh 
+ docker-utils.sh .
+ docker-utils.sh ..
+docker-utils.sh 
+docker-utils.sh build
+docker-utils.sh build docker-cobbler
+docker-utils.sh build docker-cobbler2
+docker-utils.sh build docker-cobbler-orig
+docker-utils.sh debug-container docker-cobbler
+docker-utils.sh debug docker-cobbler
+docker-utils.sh debug docker-cobbler2
+docker-utils.sh debug docker-cobbler-orig
+docker-utils.sh debug localhost/docker-cobbler2
+docker-utils.sh -f Dockerfile.build1 build docker-cobbler
+docker-utils.sh -f Dockerfile.build1 build docker-cobbler1
+docker-utils.sh -f Dockerfile.build1 run docker-cobbler1
+docker-utils.sh -f Dockerfile.build2 build docker-cobbler2
+docker-utils.sh -f Dockerfile.build build docker-cobbler
+docker-utils.sh -f Dockerfile build docker-cobbler
+docker-utils.sh -f Dockerfile build docker-cobbler-orig
+docker-utils.sh -f Dockerfile.orig build docker-cobbler-orig
+docker-utils.sh restart docker-cobbler
+docker-utils.sh run docker-cobbler
+docker-utils.sh run docker-cobbler-orig
+mod +x docker-utils.sh 
+story | grep docker-utils
+story | grep docker-utils | cut -c10-
+story | grep docker-utils | cut -c10- | sort 
