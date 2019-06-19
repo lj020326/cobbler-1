@@ -108,7 +108,7 @@ restart_container() {
             --net=host \
             --env DEFAULT_ROOT_PASSWD=cobbler \
             --env HOST_IP_ADDR=${HOST_IP_ADDR} \
-            --env HOST_HTTP_PORT=443 \
+            --env HOST_HTTP_PORT=80 \
             --env COBBLER_WEB_USER=cobbler \
             --env COBBLER_WEB_PASSWD=cobbler \
             --env COBBLER_WEB_REALM=Cobbler \
@@ -129,7 +129,7 @@ restart_container() {
         --net=host \
         --env DEFAULT_ROOT_PASSWD=cobbler \
         --env HOST_IP_ADDR=${HOST_IP_ADDR} \
-        --env HOST_HTTP_PORT=443 \
+        --env HOST_HTTP_PORT=80 \
         --env COBBLER_WEB_USER=cobbler \
         --env COBBLER_WEB_PASSWD=cobbler \
         --env COBBLER_WEB_REALM=Cobbler \
