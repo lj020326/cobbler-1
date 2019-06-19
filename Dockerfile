@@ -13,6 +13,7 @@ RUN yum update -y \
     && rm -rf /var/cache/yum
 
 RUN yum install -y \
+  python2-django16 \
   cobbler \
   cobbler-web \
   pykickstart \
@@ -25,6 +26,8 @@ RUN yum install -y \
   which \
   && yum clean all \
   &&  rm -rf /var/cache/yum
+
+#RUN yum swap -y python2-django python2-django16
 
 # Copy supervisor conf
 COPY supervisord/supervisord.conf /etc/supervisord.conf
@@ -43,7 +46,6 @@ COPY snippets/enable_X /var/lib/cobbler/snippets/enable_X
 COPY snippets/yum_update /var/lib/cobbler/snippets/yum_update
 
 # Copy personnal kickstart
-
 
 # Use personnal snippets
 RUN for kickstart in sample sample_end legacy ; \
@@ -66,7 +68,7 @@ RUN for kickstart in sample sample_end legacy ; \
        /var/lib/cobbler/kickstarts/${kickstart}.ks ; \
     done
 
-# Install vim-enhanced by default and desktop packages if profile have el_type set to desktop (ksmeta)
+## Install vim-enhanced by default and desktop packages if profile have el_type set to desktop (ksmeta)
 RUN echo -e "@core\n\nvim-enhanced\n#set \$el_type = \$getVar('type', 'minimal')\n#if \$el_type == 'desktop'\n@base\n@network-tools\n@x11\n@graphical-admin-tools\n#set \$el_version = \$getVar('os_version', None)\n#if \$el_version == 'rhel6'\n@desktop-platform\n@basic-desktop\n#else if \$el_version == 'rhel7'\n@gnome-desktop\n#end if\n#end if\nkernel" >> /var/lib/cobbler/snippets/func_install_if_enabled
 
 COPY first-sync.sh /usr/local/bin/first-sync.sh
