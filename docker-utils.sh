@@ -37,16 +37,13 @@ usage() {
     echo "  Examples:" 1>&2
     echo "     ${0} build docker-cobbler"
     echo "     ${0} build docker-cobbler-orig"
-    echo "     ${0} debug-container docker-cobbler"
-    echo "     ${0} debug docker-cobbler"
-    echo "     ${0} debug docker-cobbler-orig"
     echo "     ${0} -f Dockerfile build docker-cobbler"
-    echo "     ${0} -f Dockerfile.build build docker-cobbler2"
+    echo "     ${0} -f Dockerfile.build build docker-cobbler-from-src"
     echo "     ${0} -f Dockerfile.orig build docker-cobbler-orig"
     echo "     ${0} restart docker-cobbler"
     echo "     ${0} run docker-cobbler"
-    echo "     ${0} run docker-cobbler-orig"
-
+    echo "     ${0} attach docker-cobbler"
+    echo "     ${0} debug docker-cobbler"
     exit 1
 }
 
