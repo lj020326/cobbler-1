@@ -96,6 +96,21 @@ deploy_image() {
 
 }
 
+
+attach_container() {
+
+    DOCKER_APP_NAME=$1
+
+    DOCKER_IMAGE_NAME="${DOCKER_REGISTRY_LABEL}/${DOCKER_APP_NAME}"
+    DOCKER_IMAGE_SRC_DIR="${DOCKER_APP_NAME}"
+    CONTAINER_NAME="${DOCKER_APP_NAME}"
+    DATA_CONTAINER_NAME="${DOCKER_APP_NAME}-data"
+
+#    docker exec -it loving_heisenberg /bin/bash
+    docker exec -it ${CONTAINER_NAME} /bin/bash
+
+}
+
 restart_container() {
 
     DOCKER_APP_NAME=$1
@@ -254,8 +269,7 @@ case "${command}" in
         restart_container ${docker_app_name} $debug_container
         ;;
     "attach")
-        debug_container=2
-        restart_container ${docker_app_name} $debug_container
+        attach_container ${docker_app_name}
         ;;
     "stop")
         stop_container ${docker_app_name}
