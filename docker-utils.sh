@@ -107,6 +107,10 @@ restart_container() {
             --volumes-from ${DATA_CONTAINER_NAME} \
             --net=host \
             --env HOST_IP_ADDR=${HOST_IP_ADDR} \
+            --env HOST_HTTP_PORT=443 \
+            --env COBBLER_WEB_USER=cobbler \
+            --env COBBLER_WEB_PASSWD=cobbler \
+            --env COBBLER_WEB_REALM=Cobbler \
             --env COBBLER_LANG=en_US \
             --env COBBLER_KEYBOARD=us \
             --env COBBLER_TZ=America/New_York \
@@ -123,6 +127,10 @@ restart_container() {
         --volumes-from ${DATA_CONTAINER_NAME} \
         --net=host \
         --env HOST_IP_ADDR=${HOST_IP_ADDR} \
+        --env HOST_HTTP_PORT=443 \
+        --env COBBLER_WEB_USER=cobbler \
+        --env COBBLER_WEB_PASSWD=cobbler \
+        --env COBBLER_WEB_REALM=Cobbler \
         --env COBBLER_LANG=en_US \
         --env COBBLER_KEYBOARD=us \
         --env COBBLER_TZ=America/New_York \

@@ -57,12 +57,13 @@ RUN yum install -y \
 ## ref: https://www.centoshowtos.org/installation/kickstart-and-cobbler/
 RUN yum install -y system-config-kickstart
 
-WORKDIR /opt/src/cobbler
+#WORKDIR /opt/src/cobbler
 
 ## This results in a single layer image
 #FROM scratch
 #FROM centos:7
 #WORKDIR /opt/cobbler
+WORKDIR /opt/src/cobbler
 
 ##COPY --from=build /bin/project /bin/project
 ##COPY --from=build /bin /bin
