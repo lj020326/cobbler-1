@@ -4,11 +4,13 @@ debug_container=0
 
 #DOCKER_REGISTRY_LABEL=org-dettonville-labs
 DOCKER_REGISTRY_LABEL=localhost
-DOCKERFILE=Dockerfile.build
+DOCKERFILE=Dockerfile
 
 ## ref: https://hub.docker.com/r/tartarefr/docker-cobbler/
 #HOST_IP_ADDR=$(hostname --ip-address)
 HOST_IP_ADDR=$(hostname --ip-address | awk '{print $1}')
+
+HTTPD_LOG_DIR="/var/log/httpd"
 
 usage() {
     echo "" 1>&2
@@ -22,13 +24,29 @@ usage() {
     echo "     command:    build (builds docker image)" 1>&2
     echo "                 clean-build (cleans existing image and rebuilds)" 1>&2
     echo "                 deploy (deploys image to docker repo)" 1>&2
+    echo "                 run (restart container)" 1>&2
     echo "                 restart (restart container)" 1>&2
-    echo "                 debug-container (debug container)" 1>&2
+    echo "                 debug (run bash in container to debug)" 1>&2
+    echo "                 attach (attach to existing container and run bash)" 1>&2
     echo "                 stop (stop container)" 1>&2
-    echo "                 tail-log-access (tails apache access log from running container)" 1>&2
-    echo "                 tail-log-error (tails apache error log from running container)" 1>&2
-    echo "                 fetch-log-access (fetches a copy of the apache access log from running container)" 1>&2
-    echo "                 fetch-log-error (fetches a copy of the apache error log from running container)" 1>&2
+    echo "                 tail-accesslog (tails apache access log from running container)" 1>&2
+    echo "                 tail-errorlog (tails apache error log from running container)" 1>&2
+    echo "                 fetch-accesslog (fetches a copy of the apache access log from running container)" 1>&2
+    echo "                 fetch-errorlog (fetches a copy of the apache error log from running container)" 1>&2
+    echo "" 1>&2
+    echo "  Examples:" 1>&2
+    echo "     ${0} build docker-cobbler"
+    echo "     ${0} build docker-cobbler-orig"
+    echo "     ${0} debug-container docker-cobbler"
+    echo "     ${0} debug docker-cobbler"
+    echo "     ${0} debug docker-cobbler-orig"
+    echo "     ${0} -f Dockerfile build docker-cobbler"
+    echo "     ${0} -f Dockerfile.build build docker-cobbler2"
+    echo "     ${0} -f Dockerfile.orig build docker-cobbler-orig"
+    echo "     ${0} restart docker-cobbler"
+    echo "     ${0} run docker-cobbler"
+    echo "     ${0} run docker-cobbler-orig"
+
     exit 1
 }
 
@@ -100,7 +118,8 @@ restart_container() {
         docker rm ${CONTAINER_NAME}
     fi
 
-    if [[ ${DEBUG} -ne 0 ]]; then
+#    if [[ ${DEBUG} -ne 0 ]]; then
+    if [[ ${DEBUG} -eq 1 ]]; then
         echo "debugging container - starting bash inside container:"
         docker run --name ${CONTAINER_NAME} \
             --volume "${PWD}/.certs":/opt/ssl/ \
@@ -116,6 +135,12 @@ restart_container() {
             --env COBBLER_KEYBOARD=us \
             --env COBBLER_TZ=America/New_York \
             -it --entrypoint /bin/bash ${DOCKER_IMAGE_NAME}
+        exit 0
+    fi
+
+    if [[ ${DEBUG} -eq 2 ]]; then
+#        docker exec -it loving_heisenberg /bin/bash
+        docker exec -it ${CONTAINER_NAME} /bin/bash
         exit 0
     fi
 
@@ -210,7 +235,6 @@ fi
 
 command=$1
 docker_app_name=$2
-httpd_log_dir=""
 
 case "${command}" in
     "build")
@@ -229,20 +253,24 @@ case "${command}" in
         debug_container=1
         restart_container ${docker_app_name} $debug_container
         ;;
+    "attach")
+        debug_container=2
+        restart_container ${docker_app_name} $debug_container
+        ;;
     "stop")
         stop_container ${docker_app_name}
         ;;
-    "tail-log-access")
-        tail_log ${docker_app_name} "${httpd_log_dir}/access.log"
+    "tail-accesslog")
+        tail_log ${docker_app_name} "${HTTPD_LOG_DIR}/access.log"
         ;;
-    "tail-log-error")
-        tail_log ${docker_app_name} "${httpd_log_dir}/error.log"
+    "tail-errorlog")
+        tail_log ${docker_app_name} "${HTTPD_LOG_DIR}/error.log"
         ;;
-    "fetch-log-access")
-        fetch_log ${docker_app_name} "${httpd_log_dir}/access.log"
+    "fetch-accesslog")
+        fetch_log ${docker_app_name} "${HTTPD_LOG_DIR}/access.log"
         ;;
-    "fetch-log-error")
-        fetch_log ${docker_app_name} "${httpd_log_dir}/error.log"
+    "fetch-errorlog")
+        fetch_log ${docker_app_name} "${HTTPD_LOG_DIR}/error.log"
         ;;
     *)
         echo "Invalid command: $command" >&2
