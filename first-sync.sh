@@ -47,5 +47,7 @@ echo "cobbler get-loaders"
 cobbler get-loaders
 echo "cobbler sync"
 cobbler sync
+echo "cobbler signature update"
+cobbler signature update
 echo "cobbler check"
 cobbler check
