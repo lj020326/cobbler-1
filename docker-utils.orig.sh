@@ -35,24 +35,26 @@ usage() {
     echo "                 fetch-errorlog (fetches a copy of the apache error log from running container)" 1>&2
     echo "" 1>&2
     echo "  Examples:" 1>&2
-    echo "     ${0} build docker-openldap"
-    echo "     ${0} build localhost/ubuntu:bionic"
-    echo "     ${0} build docker-openldap-orig"
-    echo "     ${0} -f Dockerfile build docker-openldap"
+    echo "     ${0} build docker-cobbler"
+    echo "     ${0} build docker-cobbler-orig"
+    echo "     ${0} -f Dockerfile build docker-cobbler"
+    echo "     ${0} -f Dockerfile.build build docker-cobbler-from-src"
+    echo "     ${0} -f Dockerfile.orig build docker-cobbler-orig"
     echo "     ${0} restart docker-cobbler"
-    echo "     ${0} run docker-openldap"
-    echo "     ${0} attach docker-openldap"
-    echo "     ${0} debug docker-openldap"
+    echo "     ${0} run docker-cobbler"
+    echo "     ${0} attach docker-cobbler"
+    echo "     ${0} debug docker-cobbler"
     exit 1
 }
 
 build_image() {
 
-    DOCKER_IMAGE_NAME=$1
+    DOCKER_APP_NAME=$1
     CLEAN_BUILD=${2-0}
 
-#    DOCKER_IMAGE_NAME="${DOCKER_REGISTRY_LABEL}/${DOCKER_IMAGE_NAME}"
-    CONTAINER_NAME="${DOCKER_IMAGE_NAME}"
+    DOCKER_IMAGE_NAME="${DOCKER_REGISTRY_LABEL}/${DOCKER_APP_NAME}"
+    DOCKER_IMAGE_SRC_DIR="${DOCKER_APP_NAME}"
+    CONTAINER_NAME="${DOCKER_APP_NAME}"
 
     if [ "$(docker ps -qa --no-trunc --filter name=^/${CONTAINER_NAME}$)" ]; then
         if [ "$(docker ps -q -f name=^/${CONTAINER_NAME}$)" ]; then
@@ -77,9 +79,10 @@ build_image() {
 }
 
 deploy_image() {
-    DOCKER_IMAGE_NAME=$1
+    DOCKER_APP_NAME=$1
 
-#    DOCKER_IMAGE_NAME="${DOCKER_REGISTRY_LABEL}/${DOCKER_IMAGE_NAME}"
+    DOCKER_IMAGE_NAME="${DOCKER_REGISTRY_LABEL}/${DOCKER_APP_NAME}"
+    DOCKER_IMAGE_SRC_DIR="${DOCKER_APP_NAME}"
     #DOCKER_REPO_URL="artifactory.example.local:6555"
     DOCKER_REPO_URL="localhost:5000"
 
@@ -93,10 +96,10 @@ deploy_image() {
 
 attach_container() {
 
-    DOCKER_IMAGE_NAME=$1
-    DOCKER_APP_NAME="$( cut -d ':' -f 1 <<< ${DOCKER_IMAGE_NAME} )"
+    DOCKER_APP_NAME=$1
 
-#    DOCKER_IMAGE_NAME="${DOCKER_REGISTRY_LABEL}/${DOCKER_APP_NAME}"
+    DOCKER_IMAGE_NAME="${DOCKER_REGISTRY_LABEL}/${DOCKER_APP_NAME}"
+    DOCKER_IMAGE_SRC_DIR="${DOCKER_APP_NAME}"
     CONTAINER_NAME="${DOCKER_APP_NAME}"
     DATA_CONTAINER_NAME="${DOCKER_APP_NAME}-data"
 
@@ -107,11 +110,11 @@ attach_container() {
 
 restart_container() {
 
-    DOCKER_IMAGE_NAME=$1
-    DOCKER_APP_NAME="$( cut -d ':' -f 1 <<< ${DOCKER_IMAGE_NAME} )"
+    DOCKER_APP_NAME=$1
     DEBUG=${2-0}
 
-#    DOCKER_IMAGE_NAME="${DOCKER_REGISTRY_LABEL}/${DOCKER_APP_NAME}"
+    DOCKER_IMAGE_NAME="${DOCKER_REGISTRY_LABEL}/${DOCKER_APP_NAME}"
+    DOCKER_IMAGE_SRC_DIR="${DOCKER_APP_NAME}"
     CONTAINER_NAME="${DOCKER_APP_NAME}"
     DATA_CONTAINER_NAME="${DOCKER_APP_NAME}-data"
 
@@ -127,24 +130,49 @@ restart_container() {
         docker rm ${CONTAINER_NAME}
     fi
 
+#    if [[ ${DEBUG} -ne 0 ]]; then
     if [[ ${DEBUG} -eq 1 ]]; then
         echo "debugging container - starting bash inside container:"
         docker run --name ${CONTAINER_NAME} \
             --volume "${PWD}/.certs":/opt/ssl/ \
             --volumes-from ${DATA_CONTAINER_NAME} \
             --net=host \
+            --env DEFAULT_ROOT_PASSWD=cobbler \
+            --env HOST_IP_ADDR=${HOST_IP_ADDR} \
+            --env HOST_HTTP_PORT=80 \
+            --env COBBLER_WEB_USER=cobbler \
+            --env COBBLER_WEB_PASSWD=cobbler \
+            --env COBBLER_WEB_REALM=Cobbler \
+            --env COBBLER_LANG=en_US \
+            --env COBBLER_KEYBOARD=us \
+            --env COBBLER_TZ=America/New_York \
             -it --entrypoint /bin/bash ${DOCKER_IMAGE_NAME}
         exit 0
-    elif [[ ${DEBUG} -eq 2 ]]; then
+    fi
+
+    if [[ ${DEBUG} -eq 2 ]]; then
 #        docker exec -it loving_heisenberg /bin/bash
         docker exec -it ${CONTAINER_NAME} /bin/bash
         exit 0
     fi
 
+#    docker run --name ${CONTAINER_NAME} --volume "${PWD}/.certs":/opt/ssl/ --volumes-from ${DATA_CONTAINER_NAME} -p 80:80 -d ${DOCKER_IMAGE_NAME}
+#    docker run --name ${CONTAINER_NAME} --volume "${PWD}/.certs":/opt/ssl/ --volumes-from ${DATA_CONTAINER_NAME} -d ${DOCKER_IMAGE_NAME}
+#    docker run --name ${CONTAINER_NAME} --volume "${PWD}/.certs":/opt/ssl/ --volumes-from ${DATA_CONTAINER_NAME} --net=host -d ${DOCKER_IMAGE_NAME}
+
     docker run --name ${CONTAINER_NAME} \
         --volume "${PWD}/.certs":/opt/ssl/ \
         --volumes-from ${DATA_CONTAINER_NAME} \
         --net=host \
+        --env DEFAULT_ROOT_PASSWD=cobbler \
+        --env HOST_IP_ADDR=${HOST_IP_ADDR} \
+        --env HOST_HTTP_PORT=80 \
+        --env COBBLER_WEB_USER=cobbler \
+        --env COBBLER_WEB_PASSWD=cobbler \
+        --env COBBLER_WEB_REALM=Cobbler \
+        --env COBBLER_LANG=en_US \
+        --env COBBLER_KEYBOARD=us \
+        --env COBBLER_TZ=America/New_York \
         -d ${DOCKER_IMAGE_NAME}
 
     echo "started container"
@@ -157,8 +185,7 @@ restart_container() {
 
 stop_container() {
 
-    DOCKER_IMAGE_NAME=$1
-    DOCKER_APP_NAME="$( cut -d ':' -f 1 <<< ${DOCKER_IMAGE_NAME} )"
+    DOCKER_APP_NAME=$1
 
     CONTAINER_NAME="${DOCKER_APP_NAME}"
 
@@ -176,8 +203,7 @@ stop_container() {
 
 tail_log() {
 
-    DOCKER_IMAGE_NAME=$1
-    DOCKER_APP_NAME="$( cut -d ':' -f 1 <<< ${DOCKER_IMAGE_NAME} )"
+    DOCKER_APP_NAME=$1
     HTTPD_LOG_FILE=$2
 
     CONTAINER_NAME="${DOCKER_APP_NAME}"
@@ -187,8 +213,7 @@ tail_log() {
 
 fetch_log() {
 
-    DOCKER_IMAGE_NAME=$1
-    DOCKER_APP_NAME="$( cut -d ':' -f 1 <<< ${DOCKER_IMAGE_NAME} )"
+    DOCKER_APP_NAME=$1
     HTTPD_LOG_FILE=$2
     FETCHED_LOG_FILE=$(basename ${HTTPD_LOG_FILE})
 
@@ -221,42 +246,42 @@ if [ $# != 2 ]; then
 fi
 
 command=$1
-docker_image_name=$2
+docker_app_name=$2
 
 case "${command}" in
     "build")
-        build_image ${docker_image_name} 0
+        build_image ${docker_app_name} 0
         ;;
     "clean-build")
-        build_image ${docker_image_name} 1
+        build_image ${docker_app_name} 1
         ;;
     "deploy")
-        deploy_image ${docker_image_name}
+        deploy_image ${docker_app_name}
         ;;
     "restart"|"run")
-        restart_container ${docker_image_name} $debug_container
+        restart_container ${docker_app_name} $debug_container
         ;;
     "debug")
         debug_container=1
-        restart_container ${docker_image_name} $debug_container
+        restart_container ${docker_app_name} $debug_container
         ;;
     "attach")
-        attach_container ${docker_image_name}
+        attach_container ${docker_app_name}
         ;;
     "stop")
-        stop_container ${docker_image_name}
+        stop_container ${docker_app_name}
         ;;
     "tail-accesslog")
-        tail_log ${docker_image_name} "${HTTPD_LOG_DIR}/access.log"
+        tail_log ${docker_app_name} "${HTTPD_LOG_DIR}/access.log"
         ;;
     "tail-errorlog")
-        tail_log ${docker_image_name} "${HTTPD_LOG_DIR}/error.log"
+        tail_log ${docker_app_name} "${HTTPD_LOG_DIR}/error.log"
         ;;
     "fetch-accesslog")
-        fetch_log ${docker_image_name} "${HTTPD_LOG_DIR}/access.log"
+        fetch_log ${docker_app_name} "${HTTPD_LOG_DIR}/access.log"
         ;;
     "fetch-errorlog")
-        fetch_log ${docker_image_name} "${HTTPD_LOG_DIR}/error.log"
+        fetch_log ${docker_app_name} "${HTTPD_LOG_DIR}/error.log"
         ;;
     *)
         echo "Invalid command: $command" >&2

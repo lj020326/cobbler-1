@@ -1,6 +1,7 @@
 FROM centos:7
 
-MAINTAINER Didier FABERT (tartare) <didier@tartarefr.eu>
+#MAINTAINER Didier FABERT (tartare) <didier@tartarefr.eu>
+MAINTAINER Lee Johnson <lj020326@gmail.com>
 
 # RPM REPOs
 RUN yum install -y \
